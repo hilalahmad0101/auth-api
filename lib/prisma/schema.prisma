@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Type {
+  user
+  rider
+}
+
+model User {
+  id                 Int      @id @default(autoincrement())
+  full_name          String
+  email              String
+  phone              String
+  cnic               String
+  profile_pic        String
+  otp                Int?
+  verified           Int      @default(0)
+  password           String
+  type               Type     @default(user)
+  login_attempt      Int      @default(5)
+  login_attempt_time DateTime @default(now())
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  riders             Rider[] // Relation field
+
+  @@map("users") // Optional: if your table name is not 'User' in your database
+}
+
+enum Status {
+  pending
+  approved
+  reject
+}
+
+model Rider {
+  id                    Int      @id @default(autoincrement())
+  name                  String
+  date_of_birth         String
+  cnic                  String
+  email                 String
+  pink_driver           Int
+  profile               String
+  address               String
+  city                  String
+  country               String
+  cnic_front            String
+  cnic_back             String
+  driving_license_front String
+  driving_license_back  String
+  vehicle_picture_front String
+  vehicle_picture_back  String
+  selfie_with_license   String
+  vehicle_registration  String
+  modal                 String
+  vehicle_maker         String
+  color                 String
+  cc                    String
+  car_number            String
+  status                Status   @default(pending)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+  userId                Int
+  user                  User     @relation(fields: [userId], references: [id]) // Relation field
+
+  @@map("rider") // Optional: if your table name is not 'User' in your database
+}
